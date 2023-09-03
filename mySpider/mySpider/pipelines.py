@@ -5,9 +5,21 @@
 
 
 # useful for handling different item types with a single interface
-from itemadapter import ItemAdapter
+import logging
+from .mysqldb import MysqlDb
+from .mysqldb import CreateLogger
 
 
 class MyspiderPipeline:
+    def open_spider(self):
+        self.mylogger = CreateLogger()
+        self.mylogger = self.mylogger.create_logger()
+
     def process_item(self, item, spider):
+
+        df = item["df"]
+        mysql = MysqlDb()
+        engline = mysql.connect_mysql(self.mylogger)
+        mysql.to_mysql(df, 'uplimit_stock', engline, self.mylogger)
+
         return item

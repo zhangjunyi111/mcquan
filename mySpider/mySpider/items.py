@@ -2,6 +2,7 @@
 #
 # See documentation in:
 # https://docs.scrapy.org/en/latest/topics/items.html
+import logging
 
 import scrapy
 
@@ -9,4 +10,5 @@ import scrapy
 class MyspiderItem(scrapy.Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
-    pass
+    df = scrapy.Field()
+
