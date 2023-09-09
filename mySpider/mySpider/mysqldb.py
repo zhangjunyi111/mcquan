@@ -1,48 +1,54 @@
+"""
+Date:20230903
+Auther:zhangjunyi
+Email:18435205109@163.com
+"""
 import sqlalchemy
 import pandas as pd
 import logging
-
-
-class CreateLogger():
-    def __init__(self):
-        pass
-
-    def create_logger(self):
-        logger = logging.getLogger(__name__)
-        file_formatter = logging.Formatter('%(asctime)s %(message)s')
-        stream_formatter = logging.Formatter('%(asctime)s %(funcName)s %('
-                                             'levelname)s %('
-                                             'message)s')
-        file_halder = logging.FileHandler('log_file.log')
-        file_halder.setFormatter(file_formatter)
-        logger.addHandler(file_halder)
-
-
-        stream_halder = logging.StreamHandler()
-        stream_halder.setFormatter(stream_formatter)
-        logger.addHandler(stream_halder)
-        return  logger
-
+logger = logging.getLogger(__name__)
 
 class MysqlDb(object):
+
     def __init__(self):
-        pass
+        self.logger = logger
+        self.engine = None
 
-    def connect_mysql(self, logger):
-        '''
+    def connect_mysql(self, mysql_url):
+        """
         :return: 返回数据库连接
-        '''
-        engine = sqlalchemy.create_engine(
-            'mysql+pymysql://root:HONGhong1225@123.56.254.64'
-            '/mcquant'
-            '', echo=True)
-        logger.info('创建引擎成功')
-        return engine
+        """
+        self.engine = sqlalchemy.create_engine(
+            mysql_url, echo=True)
+        logging.info('创建数据库引擎成功!')
+        return self.engine
 
-    def to_mysql(self, df, table_name, engine, logger):
+    def write_to_mysql(self, df, engine, table_name):
+        """
+        :param df: Dataframe对象
+        :param table_name: Mysql数据库表名
+        :return:
+        """
         df.to_sql(table_name, con=engine
-                  , if_exists='append', index=False)
-        logger.info('插入数据库成功')
+                  , if_exists='replace', index=False)
+
+        self.logger.info('插入数据库成功!')
+        return ''
+
+    # def read_mysql(self, df, engine, table_name):
+    #     sql = 'select ts_code from {}'.format(table_name)
+    #     ts_codes = df.read_sql(con=engine, sql=sql)
+    #     return ts_codes
+
+
+    def close_connect(self):
+        """
+        :return:
+        """
+        self.engine.dispose()
+        self.logger.info("关闭数据库引擎!")
+        return ''
+
 
 
 
