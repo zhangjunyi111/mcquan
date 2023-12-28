@@ -20,7 +20,7 @@ NEWSPIDER_MODULE = "mySpider.spiders"
 ROBOTSTXT_OBEY = False
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
-CONCURRENT_REQUESTS = 1
+#CONCURRENT_REQUESTS = 32
 
 # Configure a delay for requests for the same website (default: 0)
 # See https://docs.scrapy.org/en/latest/topics/settings.html#download-delay
@@ -62,9 +62,9 @@ CONCURRENT_REQUESTS = 1
 
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
-ITEM_PIPELINES = {
-   "mySpider.pipelines.MyspiderPipeline": 300,
-}
+#ITEM_PIPELINES = {
+#    "mySpider.pipelines.MyspiderPipeline": 300,
+#}
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html
@@ -91,8 +91,3 @@ ITEM_PIPELINES = {
 REQUEST_FINGERPRINTER_IMPLEMENTATION = "2.7"
 TWISTED_REACTOR = "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
 FEED_EXPORT_ENCODING = "utf-8"
-
-
-# 设置爬虫程序Piplines中的mysql数据库连接参数
-MYSQL_URL = 'mysql+pymysql://root:HONGhong1225@123.56.254.64/mcquant'
-
