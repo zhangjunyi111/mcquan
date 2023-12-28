@@ -11,6 +11,7 @@ Email:18435205109@163.com
 import logging
 import typing
 import sys
+from datetime import datetime
 
 import pandas as pd
 
@@ -66,13 +67,14 @@ class MyspiderPipeline:
         """
 
         df = item["df"]
-        # self.session.write_to_mysql(df, self.session.mysql_eng,
-        #                             self.mysql_table1,
-        #                             )
-        ts_codes = df['股票代码'].tolist()
-        company_names = df['公司名称'].tolist()
-        trade_dates = df['交易日期'].tolist()
-
+        print("********************")
+        self.session.write_to_mysql(df, 'append', self.session.mysql_eng,
+                                    self.mysql_table1,
+                                    )
+        ts_codes = df['mc_code'].tolist()
+        company_names = df['mc_name'].tolist()
+        trade_dates = df['trade_date'].tolist()
+        print(trade_dates)
         datas = list(zip(ts_codes, company_names, trade_dates))
         df_dict_table = pd.read_sql_table(self.mysql_table2,
                                           self.session.mysql_eng)
@@ -94,7 +96,8 @@ class MyspiderPipeline:
             else:
                 logging.info('else分支')
                 new_dict = {'ts_code': data[0], 'company_name': data[1],
-                            'start_time': data[2], 'limit_increases_number': 1}
+                            'start_time': data[2],
+                            'limit_increases_number': 1}
                 new_df = pd.DataFrame(new_dict, index=[0])
                 df_dict_table = pd.concat([new_df, df_dict_table])
 
@@ -104,7 +107,8 @@ class MyspiderPipeline:
         except Exception as e:
             print(e)
         # logging.info('dict_table %s', df_dict_table)
-        self.session.write_to_mysql(df_dict_table, self.session.mysql_eng, self.
+        self.session.write_to_mysql(df_dict_table, 'replace',
+                                    self.session.mysql_eng, self.
                                     mysql_table2,
                                     )
         # print("Exiting the program...")

@@ -33,6 +33,7 @@ def parse(path,files):
                        "换手": huanshoulvs, '流通市值': liutongshizhis, '总市值':
                             zongshizhis, '所属行业':
                 hybks, '首次封板时间': fbts, '最后封板时间': lbts, '交易日期': trade_date}
+
                 if df.empty:
                     df = pd.DataFrame(data)
                 else:

@@ -23,13 +23,17 @@ class MysqlDb(object):
         logging.info('创建数据库引擎成功!')
         return self.engine
 
-    def write_to_mysql(self, df, engine, table_name):
+    def write_to_mysql(self, df,if_exists, engine, table_name):
         """
         :param df: Dataframe对象
         :param table_name: Mysql数据库表名
         :return:
         """
-        df.to_sql(table_name, con=engine
+        if if_exists == 'append':
+            df.to_sql(table_name, con=engine
+                      , if_exists='append', index=False)
+        if if_exists == 'replace':
+            df.to_sql(table_name, con=engine
                   , if_exists='replace', index=False)
 
         self.logger.info('插入数据库成功!')
