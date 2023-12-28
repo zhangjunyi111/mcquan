@@ -96,3 +96,6 @@ FEED_EXPORT_ENCODING = "utf-8"
 # 设置爬虫程序Piplines中的mysql数据库连接参数
 MYSQL_URL = 'mysql+pymysql://root:HONGhong1225@123.56.254.64/mcquant'
 
+# 关闭debug信息
+# LOG_LEVEL = 'WARNING'
+

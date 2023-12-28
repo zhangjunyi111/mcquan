@@ -9,6 +9,7 @@ import re
 import logging
 from datetime import datetime
 from datetime import timedelta
+
 global n
 
 
@@ -21,9 +22,10 @@ class ExampleSpider(scrapy.Spider):
                  '={}&_=1692538530206'
 
     def start_requests(self):
+        # now = '20230922'
         now = datetime.now()
         # 开启后爬前一天的数据，关闭后爬当天的数据
-        now = (now + timedelta(days=-1))
+        # now = (now + timedelta(days=-2))
         now = now.strftime("%Y%m%d")
         # # start_date = one_day_ago
         start_date = now
@@ -52,17 +54,41 @@ class ExampleSpider(scrapy.Spider):
         fbts = re.findall('"fbt":(.*?),', result)
         lbts = re.findall('"lbt":(.*?),', result)
         huanshoulvs = re.findall('"hs":(.*?),', result)
+        lbcs = re.findall('"lbc":(.*?),', result)
+        zbcs = re.findall('"zbc":(.*?),', result)
+        days = re.findall('"days":(.*?),', result)
+        cts = re.findall('"ct":(.*?)}', result)
+        ztjjs = list(zip(days, cts))
+        # logging.info("ztjjs的值为%s",ztjjs)
+        new_ztjjs = []
+        for ztjj in ztjjs:
+            # for x, y in ztjj:
+            # logging.info("ztjj的值为%s",ztjj)
+            new_ztjjs.append(f'{ztjj[0]}/{ztjj[1]}')
+        # logging.info("new_ztjjs的值为%s", new_ztjjs)
+
         length = len(daimas)
         trade_date = response.meta['date']
-        trade_dates = length * [response.meta['date']]
+        # logging.warning('trade_date: %s', trade_date)
+        trade_date = datetime.strptime(trade_date, "%Y%m%d")
+        # logging.warning('trade_date: %s', trade_date)
+        trade_date = datetime.date(trade_date)
+        logging.info("trade_date 的type为,%s", type(trade_date))
+        logging.info('trade_date: %s', trade_date)
+        trade_dates = length * [trade_date]
         data = {
-            '股票代码': daimas, '公司名称': names, '最新价': zuixinjias, '成交': chengjiaoes,
-            "换手": huanshoulvs, '流通市值': liutongshizhis, '总市值':
-                zongshizhis, '所属行业':
-                hybks, '首次封板时间': fbts, '最后封板时间': lbts, '交易日期': trade_dates}
+            'mc_code': daimas, 'mc_name': names, 'newest_price': zuixinjias,
+            'amount': chengjiaoes,
+            "huanshou": huanshoulvs, 'traded_market_value': liutongshizhis,
+            'total_value':
+                zongshizhis, 'industry':
+                hybks, 'first_sealing_time': fbts, 'last_sealing_time': lbts,
+            'trade_date': trade_dates, 'lbc': lbcs, 'zbc': zbcs, 'zttj':
+                new_ztjjs}
+
         df = pd.DataFrame(data)
+        # print(df)
         # df.to_excel(f'{trade_date}.xlsx')
         item = MyspiderItem()
         item["df"] = df
         yield item
-
