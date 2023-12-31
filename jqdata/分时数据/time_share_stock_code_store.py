@@ -1,3 +1,4 @@
+import logging
 import os
 
 import pandas as pd
@@ -11,7 +12,6 @@ from openpyxl import load_workbook
 import pymysql
 
 pymysql.install_as_MySQLdb()
-
 import time
 
 
@@ -35,7 +35,7 @@ def get_codes() -> list:
     new_codes = []
     db_conn = create_mysql_engine()
     # 读取服务器的字典表
-    ztb_stock = pd.read_sql('select * from ztb_stock', db_conn)
+    ztb_stock = pd.read_sql('select COUNT(DISTINCT mc_code) from base_daily_stock ', db_conn)
     # 读取字段表中的ts_code列
     codes = ztb_stock[
         'mc_code'
@@ -74,43 +74,47 @@ def get_result(new_codes: list):
     # 创建空的Dataframe准备接收返回的数据
     myresult = pd.DataFrame()
     for code in new_codes:
-        res = False
-        datas = []
-        url = f'https://web.ifzq.gtimg.cn/appstock/app/minute/query?code={code}'
-        while not res:
-            try:
-                res = requests.post(url=url, headers=headers, proxies=proxies)
-            except:
-                res = None
-        # res = requests.post(url=url, headers=headers, proxies=proxies)
-        # print('res_type', type(res))
-        simWords = res.json()
-        time.sleep(3)
-        # 根据simWords的格式进行解析
-        simWords = simWords['data'][code]['data']['data']
-        for data in simWords:
-            data = data.split(' ')
-            data.append(code)
-            data.append(date)
-            datas.append(data)
-        df = pd.DataFrame(datas,
-                          columns=['time', 'price', 'amount', 'vol', 'mccode',
-                                   'date'])
-        print(df)
-        # 利用pandas的contact函数将旧的结果与新结果拼接起来。
-        # myresult = pd.concat([myresult, df])
-        # myresult.to_sql(name='time_share', con=db_conn2,
-        #                      if_exists='append',
-        #                      index_label=False, index=False)
+        try:
+            res = False
+            datas = []
+            url = f'https://web.ifzq.gtimg.cn/appstock/app/minute/query?code={code}'
+            while not res:
+                try:
+                    res = requests.post(url=url, headers=headers, proxies=proxies)
+                except:
+                    res = None
+            # res = requests.post(url=url, headers=headers, proxies=proxies)
+            # print('res_type', type(res))
+            simWords = res.json()
+            time.sleep(3)
+            # 根据simWords的格式进行解析
+            simWords = simWords['data'][code]['data']['data']
+            for data in simWords:
+                data = data.split(' ')
+                data.append(code)
+                data.append(date)
+                datas.append(data)
+            df = pd.DataFrame(datas,
+                              columns=['time', 'price', 'amount', 'vol', 'mccode',
+                                       'date'])
+            print(df)
+            # 利用pandas的contact函数将旧的结果与新结果拼接起来。
+            # myresult = pd.concat([myresult, df])
+            # myresult.to_sql(name='time_share', con=db_conn2,
+            #                      if_exists='append',
+            #                      index_label=False, index=False)
 
-        if os.path.exists(f'{code}.xlsx'):
-            df_old = pd.read_excel(f'{code}.xlsx')
-            df = pd.concat([df, df_old])
-            df.to_excel(f'{code}.xlsx', index=False)
-        else:
-            # pd.to_excel(f'{code}.xlsx'
-            #             )
-            df.to_excel(f'{code}.xlsx', index=False)
+            if os.path.exists(f'{code}.xlsx'):
+                df_old = pd.read_excel(f'{code}.xlsx')
+                df = pd.concat([df, df_old])
+                df.to_excel(f'{code}.xlsx', index=False)
+            else:
+                # pd.to_excel(f'{code}.xlsx'
+                #             )
+                df.to_excel(f'{code}.xlsx', index=False)
+        except Exception as e:
+            logging.error(e)
+            continue
     return
 
 
