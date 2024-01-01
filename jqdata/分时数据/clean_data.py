@@ -61,11 +61,11 @@ def read_dipei_write_gaopei() :
     # 因为腾讯的分时数据的接口的格式参数code的格式为shx(上海的证券交易所平台),skewx为深圳交易所平台。
         for code in codes:
             if code.startswith('0'):
-               code = code.replace('0', 'SZ.0', 1)
+               code = code.replace('0', 'SZ0', 1)
             elif code.startswith('3'):
-                code = code.replace('3', 'SZ.3', 1)
+                code = code.replace('3', 'SZ3', 1)
             elif code.startswith('6'):
-                code = code.replace('6', 'SH.6', 1)
+                code = code.replace('6', 'SH6', 1)
             df = pd.read_sql(f"select * from fsdata_copy where "
                                  f"DATE_FORMAT(STR_TO_DATE(time, '%%Y-%%m-%%d "
                                  f"%%H:%%i:%%s'),'%%Y-%%m-%%d') = '"
