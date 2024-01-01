@@ -1,14 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+<<<<<<< HEAD
   <component name="PublishConfigData" autoUpload="Always" serverName="root@47.119.175.107:22 password" remoteFilesAllowedToDisappearOnAutoupload="false">
     <serverData>
       <paths name="47.119.175.107">
+=======
+  <component name="PublishConfigData" remoteFilesAllowedToDisappearOnAutoupload="false">
+    <serverData>
+      <paths name="root@47.119.175.107:22 password">
+>>>>>>> eaa6d663544918c91495af6776e6a7fb5da2e9da
         <serverdata>
           <mappings>
             <mapping local="$PROJECT_DIR$" web="/" />
           </mappings>
         </serverdata>
       </paths>
+<<<<<<< HEAD
       <paths name="root@47.119.175.107:22 password">
         <serverdata>
           <mappings>
@@ -18,5 +25,8 @@
       </paths>
     </serverData>
     <option name="myAutoUpload" value="ALWAYS" />
+=======
+    </serverData>
+>>>>>>> eaa6d663544918c91495af6776e6a7fb5da2e9da
   </component>
 </project>
