@@ -28,7 +28,7 @@ def get_codes() -> list:
     """
     :return:涨停板的股票列表
     """
-    new_codes = []
+    new_codes = ['sz001368', 'sz002067']
     db_conn = create_mysql_engine()
     # 读取服务器的字典表
     ztb_stock = pd.read_sql('select * from ztb_stock', db_conn)
@@ -83,10 +83,10 @@ def get_result(new_codes: list):
         print(df)
         # 利用pandas的contact函数将旧的结果与新结果拼接起来。
         myresult = pd.concat([myresult, df])
-    # myresult.to_sql(name='time_share', con=db_conn2,
-    #                      if_exists='append',
-    #                      index_label=False, index=False)
-        myresult.to_excel('分时数据2023-12-25.xlsx')
+    myresult.to_sql(name='fs_data', con=db_conn2,
+                         if_exists='append',
+                         index_label=False, index=False)
+    # myresult.to_excel('分时数据2023-12-30.xlsx')
     return
 
 
