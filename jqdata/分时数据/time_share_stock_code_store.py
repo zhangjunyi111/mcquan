@@ -35,11 +35,10 @@ def get_codes() -> list:
     new_codes = []
     db_conn = create_mysql_engine()
     # 读取服务器的字典表
-    ztb_stock = pd.read_sql('select COUNT(DISTINCT mc_code) from base_daily_stock ', db_conn)
+    ztb_stock = pd.read_sql(
+        'select COUNT(DISTINCT mc_code) from base_stock_daily ', db_conn)
     # 读取字段表中的ts_code列
-    codes = ztb_stock[
-        'mc_code'
-    ]
+    codes = ztb_stock['mc_code']
     # 因为腾讯的分时数据的接口的格式参数code的格式为shx(上海的证券交易所平台),skewx为深圳交易所平台。
     for code in codes:
         if code.startswith('0'):
@@ -77,7 +76,9 @@ def get_result(new_codes: list):
         try:
             res = False
             datas = []
-            url = f'https://web.ifzq.gtimg.cn/appstock/app/minute/query?code={code}'
+            url = (
+                f'https://web.ifzq.gtimg.cn/'
+                f'appstock/app/minute/query?code={code}')
             while not res:
                 try:
                     res = requests.post(url=url, headers=headers, proxies=proxies)
@@ -94,9 +95,10 @@ def get_result(new_codes: list):
                 data.append(code)
                 data.append(date)
                 datas.append(data)
-            df = pd.DataFrame(datas,
-                              columns=['time', 'price', 'amount', 'vol', 'mccode',
-                                       'date'])
+            df = pd.DataFrame(
+                datas,
+                columns=[
+                        'time', 'price', 'amount', 'vol', 'mccode', 'date'])
             print(df)
             # 利用pandas的contact函数将旧的结果与新结果拼接起来。
             # myresult = pd.concat([myresult, df])
